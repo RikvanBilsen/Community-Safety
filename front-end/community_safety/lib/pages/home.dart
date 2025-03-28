@@ -6,9 +6,29 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: appBar(),
-      body: const Center(child: Text('Welcome to Community Safety!')),
+      body: Center(
+        child: Container(
+          width: screenWidth * 0.9,
+          height: screenHeight * 0.3,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 5,
+                spreadRadius: 3,
+                offset: Offset(0, 0),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -21,10 +41,7 @@ class HomePage extends StatelessWidget {
       title: Center(
         child: const Text(
           'Travel Safe',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white
-            ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
     );
