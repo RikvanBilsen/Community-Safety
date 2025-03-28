@@ -2,7 +2,7 @@
 
 namespace CommunitySafety_API.Models
 {
-    public class Straatverlichting
+    public class Streetlights
     {
         public required int Id { get; set; }
 
