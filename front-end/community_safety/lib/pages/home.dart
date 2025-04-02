@@ -1,28 +1,34 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final blackColor = 0xFF1D1D1D;
   final blueColor = 0xFF49A7FF;
   final yellowColor = 0xFFFFC300;
   final redColor = 0xFFFF0000;
   final greenColor = 0xFF00B731;
+
+  Set<String> selectedFilters = <String>{};
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double cardWidth = screenWidth * 0.9;
-    double buttonWidth = (cardWidth - 50) / 2;
 
     return Scaffold(
       appBar: appBar(),
-      body: mainCard(screenWidth, screenHeight, cardWidth, buttonWidth),
+      body: mainCard(screenWidth, screenHeight, cardWidth),
     );
   }
 
-  Center mainCard(double screenWidth, double screenHeight, double cardWidth, double buttonWidth) {
+  Center mainCard(double screenWidth, double screenHeight, double cardWidth) {
     return Center(
       child: Container(
         width: screenWidth * 0.9,
@@ -49,63 +55,40 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               SizedBox(height: 10),
-              SizedBox(
-                width: cardWidth * 0.9,
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.near_me),
-                    labelText: 'Start location',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+              TextField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.near_me),
+                  labelText: 'Start location',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
               SizedBox(height: 10),
-              SizedBox(
-                width: cardWidth * 0.9,
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.location_on),
-                    labelText: 'Destination',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+              TextField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.location_on),
+                  labelText: 'Destination',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
               SizedBox(height: 10),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
+              GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 3.5,
+                physics: NeverScrollableScrollPhysics(),
                 children: [
-                  _buildFilterButton(
-                    Icons.lightbulb,
-                    "Illuminated streets",
-                    Color(yellowColor),
-                    buttonWidth,
-                  ),
-                  _buildFilterButton(
-                    Icons.groups,
-                    "Crowded spaces",
-                    Color(blueColor),
-                    buttonWidth,
-                  ),
-                  _buildFilterButton(
-                    Icons.videocam,
-                    "Security cameras",
-                    Color(greenColor),
-                    buttonWidth,
-                  ),
-                  _buildFilterButton(
-                    Icons.no_drinks,
-                    "Alcohol banned area",
-                    Color(redColor),
-                    buttonWidth,
-                  ),
+                  _buildFilterChip("Illuminated streets", Color(yellowColor)),
+                  _buildFilterChip("Crowded spaces", Color(blueColor)),
+                  _buildFilterChip("Security cameras", Color(greenColor)),
+                  _buildFilterChip("Alcohol banned area", Color(redColor)),
                 ],
               ),
-              SizedBox(height: 15),
               SizedBox(
                 width: cardWidth * 0.9,
                 child: ElevatedButton.icon(
@@ -113,9 +96,9 @@ class HomePage extends StatelessWidget {
                   icon: Icon(Icons.search, color: Colors.white),
                   label: Text("Find safest route"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(blueColor),
+                    backgroundColor: Color(blackColor),
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -129,39 +112,32 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterButton(
-    IconData icon,
-    String label,
-    Color color,
-    double width,
-  ) {
+  Widget _buildFilterChip(String label, Color color) {
     return SizedBox(
-      width: width,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        icon: Icon(icon, color: color),
-        label: Text(
-          label,
-          style: TextStyle(color: Colors.black, fontSize: 12),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-            side: BorderSide(color: Colors.black),
-          ),
-        ),
+      width: double.infinity,
+      child: FilterChip(
+        label: Text(label, textAlign: TextAlign.center),
+        selected: selectedFilters.contains(label),
+        selectedColor: color.withOpacity(0.3),
+        onSelected: (bool selected) {
+          setState(() {
+            if (selected) {
+              selectedFilters.add(label);
+            } else {
+              selectedFilters.remove(label);
+            }
+          });
+        },
       ),
     );
   }
 
   AppBar appBar() {
     return AppBar(
-      backgroundColor: Color(blueColor),
+      backgroundColor: Color(blackColor),
       toolbarHeight: 100,
       elevation: 10,
-      shadowColor: Color(blueColor),
+      shadowColor: Color(blackColor),
       title: Center(
         child: const Text(
           'Travel Safe',
