@@ -1,3 +1,6 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:community_safety/pages/add.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,8 +27,33 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: appBar(),
-      body: mainCard(screenWidth, screenHeight, cardWidth),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          mainCard(screenWidth, screenHeight, cardWidth),
+          SizedBox(height: 50),
+          addCameraBtn(context),
+        ],
+      ),
     );
+  }
+
+  ElevatedButton addCameraBtn(BuildContext context) {
+    return ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddPage()));
+          },
+          icon: Icon(Icons.videocam, color: Colors.white),
+          label: Text("Add Camera"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(blackColor),
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
   }
 
   Center mainCard(double screenWidth, double screenHeight, double cardWidth) {
