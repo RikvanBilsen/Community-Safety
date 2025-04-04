@@ -1,11 +1,20 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddPage extends StatelessWidget {
+class AddPage extends StatefulWidget {
   const AddPage({super.key});
 
-  final blackColor = 0xFF1D1D1D;
+  @override
+  State<AddPage> createState() => _AddPageState();
+}
+
+class _AddPageState extends State<AddPage> {
+  final TextEditingController postalCodeController = TextEditingController();
+  final TextEditingController houseNumberController = TextEditingController();
+
+  final int blackColor = 0xFF1D1D1D;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +60,7 @@ class AddPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: postalCodeController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.location_pin),
                   labelText: 'Postal code',
@@ -61,6 +71,7 @@ class AddPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: houseNumberController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.house),
                   labelText: 'House number',
@@ -74,7 +85,7 @@ class AddPage extends StatelessWidget {
                 child: SizedBox(
                   width: cardWidth * 0.6,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () => addCameraToFirestore(),
                     icon: Icon(Icons.add, color: Colors.white),
                     label: Text("Add Camera"),
                     style: ElevatedButton.styleFrom(
@@ -95,6 +106,41 @@ class AddPage extends StatelessWidget {
     );
   }
 
+  Future<void> addCameraToFirestore() async {
+    String postalCode = postalCodeController.text.trim();
+    String houseNumber = houseNumberController.text.trim();
+
+    if (postalCode.isEmpty || houseNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Fill out both fields")),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('cameras').add({
+        'postal_code': postalCode,
+        'house_number': houseNumber,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera added!"), duration: Duration(seconds: 3)),
+      );
+
+      postalCodeController.clear();
+      houseNumberController.clear();
+
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context);
+    });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
   AppBar appBar() {
     return AppBar(
       backgroundColor: Color(blackColor),
@@ -102,7 +148,7 @@ class AddPage extends StatelessWidget {
       elevation: 10,
       shadowColor: Color(blackColor),
       iconTheme: IconThemeData(
-        color: Colors.white, // Kleur van het terug-pijltje
+        color: Colors.white, 
       ),
       title: Text(
         'Travel Safe',
